@@ -3,9 +3,16 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import OpenAI from "openai";
 import { env } from "@/env";
+import { zodResponseFormat } from "openai/helpers/zod.mjs";
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,
+});
+
+const rulingSchema = z.object({
+  isHaram: z.boolean().nullable(),
+  explanation: z.string(),
+  references: z.array(z.string()).optional(),
 });
 
 /**
@@ -22,7 +29,7 @@ export const appRouter = createTRPCRouter({
           throw new Error("Query cannot be empty");
         }
 
-        const response = await openai.chat.completions.create({
+        const response = await openai.beta.chat.completions.parse({
           model: "gpt-4o-mini",
           messages: [
             {
@@ -49,22 +56,20 @@ export const appRouter = createTRPCRouter({
             },
           ],
           temperature: 0.2,
-          response_format: { type: "json_object" },
+          response_format: zodResponseFormat(rulingSchema, "ruling"),
         });
 
-        const content = response.choices[0]?.message?.content;
+        const content = response.choices[0]?.message;
 
-        if (!content) {
+        if (content?.refusal) {
           throw new Error("No response from OpenAI");
         }
 
-        const parsedResponse = z
-          .object({
-            isHaram: z.boolean().optional(),
-            explanation: z.string().optional(),
-            references: z.array(z.string()).optional(),
-          })
-          .parse(JSON.parse(content));
+        const parsedResponse = content?.parsed;
+
+        if (!parsedResponse) {
+          throw new Error("Failed to parse response from OpenAI");
+        }
 
         if (parsedResponse.isHaram === null) {
           return {
