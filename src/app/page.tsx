@@ -7,7 +7,7 @@ import { z } from "zod";
 const rulingSchema = z.object({
   isHaram: z.boolean().nullable(),
   explanation: z.string(),
-  references: z.array(z.string()).optional(),
+  references: z.array(z.string()),
 });
 
 export default function HaramChecker() {
