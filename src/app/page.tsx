@@ -1,25 +1,36 @@
 "use client";
 import { useState } from "react";
 import { api } from "@/trpc/react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { z } from "zod";
+
+const rulingSchema = z.object({
+  isHaram: z.boolean().nullable(),
+  explanation: z.string(),
+  references: z.array(z.string()).optional(),
+});
 
 export default function HaramChecker() {
   const [query, setQuery] = useState("");
-  const [inputValue, setInputValue] = useState("");
 
-  const { data, isLoading, error } = api.isHaram.useQuery(
-    { query: inputValue },
-    {
-      enabled: !!inputValue,
-      refetchOnWindowFocus: false,
-    },
-  );
+  const {
+    object: currentData,
+    submit,
+    isLoading,
+    error,
+  } = useObject({
+    api: "/api/ruling",
+    schema: rulingSchema,
+  });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!query.trim()) return;
 
-    setInputValue(query.trim());
+    submit({
+      query: query.trim(),
+    });
   }
 
   return (
@@ -100,22 +111,26 @@ export default function HaramChecker() {
           </div>
         )}
 
-        {data && !error && (
+        {currentData && !error && (
           <div
-            className={`mt-6 rounded-lg p-6 ${data.isHaram ? "border-2 border-red-300 bg-red-50" : "border-2 border-green-300 bg-green-50"}`}
+            className={`mt-6 rounded-lg p-6 ${currentData.isHaram ? "border-2 border-red-300 bg-red-50" : "border-2 border-green-300 bg-green-50"}`}
           >
             <h3
-              className={`mb-2 text-2xl font-bold ${data.isHaram ? "text-red-700" : "text-green-700"}`}
+              className={`mb-2 text-2xl font-bold ${currentData.isHaram === true ? "text-red-700" : currentData.isHaram === null ? "text-yellow-700" : "text-green-700"}`}
             >
-              {data.isHaram ? "This is Haram (حرام)" : "This is Halal (حلال)"}
+              {currentData.isHaram === true
+                ? "This is Haram (حرام)"
+                : currentData.isHaram === null
+                  ? "It Depends"
+                  : "This is Halal (حلال)"}
             </h3>
-            <p className="text-gray-700">{data.explanation}</p>
+            <p className="text-gray-700">{currentData.explanation}</p>
 
-            {data.references && (
+            {currentData.references && (
               <div className="mt-4 border-t border-gray-300 pt-4">
                 <p className="text-sm font-semibold">References:</p>
                 <ul className="mt-2 list-disc pl-5 text-left text-sm text-gray-600">
-                  {data.references.map((ref, index) => (
+                  {currentData.references.map((ref, index) => (
                     <li key={index}>{ref}</li>
                   ))}
                 </ul>
