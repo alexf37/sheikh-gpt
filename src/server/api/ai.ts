@@ -26,7 +26,7 @@ export function generateRulingStream(input: string) {
     }
 
     const response = streamObject({
-      model: openai("gpt-4o-mini"),
+      model: openai("gpt-4.1-nano"),
       messages: [
         {
           role: "system",
