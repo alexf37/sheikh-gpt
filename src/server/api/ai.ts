@@ -47,7 +47,7 @@ export function generateRulingStream(input: string) {
               - explanation: string (detailed explanation of the ruling) with minimum of 10 characters
               - references: string[] (array of relevant references from Islamic sources). Keep these brief, no more than 3 citations with each one at most 100 characters. You should quote the Quran/source when possible, rather than just citing the page. It is very important that you have teh quote if there is one.
               
-              If you cannot determine a clear answer, remember to set ruling to DEPENDS and explain why in the explanation field. Be generous however; if it seems innocent enough, lean towards PROBABLY_HALAL or HALAL.
+              If you cannot determine a clear answer, remember to set ruling to DEPENDS and explain why in the explanation field. Generally avoid it depends unless it is absolutely necessary. Be generous however; if it seems innocent enough, lean towards PROBABLY_HALAL or HALAL.
               DO NOT OUTPUT ANYTHING ELSE. NOTHING BEYOND THE JSON I SPECIFIED. YOUR RESPONSES SHOULD ALWAYS BE JUST JSON. THAT'S IT. I SHOULD BE ABLE TO PLUG YOUR RESPONSE INTO A JSON PARSER AND IT WILL WORK.
               `,
         },
