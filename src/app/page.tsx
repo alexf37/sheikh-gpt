@@ -1,11 +1,16 @@
 "use client";
 import { useState } from "react";
-import { api } from "@/trpc/react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { z } from "zod";
 
 const rulingSchema = z.object({
-  isHaram: z.boolean().nullable(),
+  ruling: z.enum([
+    "HARAM",
+    "PROBABLY_HARAM",
+    "DEPENDS",
+    "PROBABLY_HALAL",
+    "HALAL",
+  ]),
   explanation: z.string(),
   references: z.array(z.string()),
 });
@@ -113,16 +118,38 @@ export default function HaramChecker() {
 
         {currentData && !error && (
           <div
-            className={`mt-6 rounded-lg p-6 ${currentData.isHaram ? "border-2 border-red-300 bg-red-50" : "border-2 border-green-300 bg-green-50"}`}
+            className={`mt-6 rounded-lg p-6 ${
+              currentData.ruling === "HARAM" ||
+              currentData.ruling === "PROBABLY_HARAM"
+                ? "border-2 border-red-300 bg-red-50"
+                : currentData.ruling === "HALAL" ||
+                    currentData.ruling === "PROBABLY_HALAL"
+                  ? "border-2 border-green-300 bg-green-50"
+                  : "border-2 border-yellow-300 bg-yellow-50" // DEPENDS
+            }`}
           >
             <h3
-              className={`mb-2 text-2xl font-bold ${currentData.isHaram === true ? "text-red-700" : currentData.isHaram === null ? "text-yellow-700" : "text-green-700"}`}
+              className={`mb-2 text-2xl font-bold ${
+                currentData.ruling === "HARAM"
+                  ? "text-red-700"
+                  : currentData.ruling === "PROBABLY_HARAM"
+                    ? "text-red-600"
+                    : currentData.ruling === "HALAL"
+                      ? "text-green-700"
+                      : currentData.ruling === "PROBABLY_HALAL"
+                        ? "text-green-600"
+                        : "text-yellow-700" // DEPENDS
+              }`}
             >
-              {currentData.isHaram === true
-                ? "This is Haram (حرام)"
-                : currentData.isHaram === null
-                  ? "It Depends"
-                  : "This is Halal (حلال)"}
+              {currentData.ruling === "HARAM"
+                ? "Haram (حرام)"
+                : currentData.ruling === "PROBABLY_HARAM"
+                  ? "Probably Haram (غالباً حرام)"
+                  : currentData.ruling === "HALAL"
+                    ? "Halal (حلال)"
+                    : currentData.ruling === "PROBABLY_HALAL"
+                      ? "Probably Halal (غالباً حلال)"
+                      : "It Depends"}
             </h3>
             <p className="text-gray-700">{currentData.explanation}</p>
 
