@@ -12,7 +12,7 @@ export const appRouter = createTRPCRouter({
   isHaram: publicProcedure
     .input(z.object({ query: z.string().min(1) }))
     .query(async function* ({ input }) {
-      const response = generateRulingStream(input.query);
+      const response = generateRulingStream({ query: input.query });
       for await (const partialObject of response.partialObjectStream) {
         yield partialObject;
       }

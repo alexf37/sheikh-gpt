@@ -1,7 +1,7 @@
-import { generateRulingStream } from "@/server/api/ai";
+import { generateRulingStream, type RulingInput } from "@/server/api/ai";
 
 export async function POST(req: Request) {
-  const context = await req.text();
-  const response = generateRulingStream(context);
+  const input = (await req.json()) as RulingInput;
+  const response = generateRulingStream(input);
   return response.toTextStreamResponse();
 }
