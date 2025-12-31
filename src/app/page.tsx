@@ -1,7 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { z } from "zod";
+
+const UPDATE_BANNER_KEY = "sheikhgpt-update-banner-seen-v1";
 
 const rulingSchema = z.object({
   ruling: z.enum([
@@ -17,6 +19,7 @@ const rulingSchema = z.object({
 
 export default function HaramChecker() {
   const [query, setQuery] = useState("");
+  const [showBanner, setShowBanner] = useState(false);
 
   const {
     object: currentData,
@@ -27,6 +30,20 @@ export default function HaramChecker() {
     api: "/api/ruling",
     schema: rulingSchema,
   });
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem(UPDATE_BANNER_KEY);
+    if (!hasSeen) {
+      setShowBanner(true);
+      localStorage.setItem(UPDATE_BANNER_KEY, "true");
+      
+      const timer = setTimeout(() => {
+        setShowBanner(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,6 +57,21 @@ export default function HaramChecker() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-emerald-900 p-4 text-center">
+      {/* Update Banner */}
+      <div
+        className={`fixed left-0 right-0 top-0 z-50 flex justify-center transition-transform duration-500 ease-out ${
+          showBanner ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
+        <div className="m-3 flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 px-5 py-2.5 shadow-lg">
+          <span className="text-lg">✨</span>
+          <span className="font-semibold text-emerald-900">
+            Update: SheikhGPT just got smarter
+          </span>
+          <span className="text-lg">🕌</span>
+        </div>
+      </div>
+
       <div className="mb-8 w-full max-w-3xl">
         <div className="border-gold border-b-4 py-4">
           <h1 className="font-arabic text-gold mb-2 text-4xl md:text-5xl">
