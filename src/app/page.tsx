@@ -152,9 +152,8 @@ export default function HaramChecker() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-emerald-900 p-4 text-center">
       {/* Update Banner */}
       <div
-        className={`fixed left-0 right-0 top-0 z-50 flex justify-center transition-transform duration-500 ease-out ${
-          showBanner ? "translate-y-0" : "-translate-y-full"
-        }`}
+        className={`fixed left-0 right-0 top-0 z-50 flex justify-center transition-transform duration-500 ease-out ${showBanner ? "translate-y-0" : "-translate-y-full"
+          }`}
       >
         <div className="m-3 flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 px-5 py-2.5 shadow-lg">
           <span className="text-lg">✨</span>
@@ -282,19 +281,17 @@ export default function HaramChecker() {
         {/* Ruling Display */}
         {hasRuling && !error && (
           <div
-            className={`mt-6 rounded-lg p-6 ${
-              displayData?.ruling === "HARAM" ||
-              displayData?.ruling === "PROBABLY_HARAM"
+            className={`mt-6 rounded-lg p-6 ${displayData?.ruling === "HARAM" ||
+                displayData?.ruling === "PROBABLY_HARAM"
                 ? "border-2 border-red-300 bg-red-50"
                 : displayData?.ruling === "HALAL" ||
-                    displayData?.ruling === "PROBABLY_HALAL"
+                  displayData?.ruling === "PROBABLY_HALAL"
                   ? "border-2 border-green-300 bg-green-50"
                   : "border-2 border-yellow-300 bg-yellow-50"
-            }`}
+              }`}
           >
             <h3
-              className={`mb-2 text-2xl font-bold ${
-                displayData?.ruling === "HARAM"
+              className={`mb-2 text-2xl font-bold ${displayData?.ruling === "HARAM"
                   ? "text-red-700"
                   : displayData?.ruling === "PROBABLY_HARAM"
                     ? "text-red-600"
@@ -303,7 +300,7 @@ export default function HaramChecker() {
                       : displayData?.ruling === "PROBABLY_HALAL"
                         ? "text-green-600"
                         : "text-yellow-700"
-              }`}
+                }`}
             >
               {displayData?.ruling === "HARAM"
                 ? "Haram (حرام)"
@@ -390,15 +387,6 @@ export default function HaramChecker() {
                 )}
               </div>
             )}
-
-            {/* Start Over Button */}
-            <button
-              type="button"
-              onClick={handleStartOver}
-              className="mt-4 text-sm text-gray-500 underline hover:text-gray-700"
-            >
-              Ask about something else
-            </button>
           </div>
         )}
 
