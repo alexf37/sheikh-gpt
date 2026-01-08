@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Analytics } from "@vercel/analytics/react";
+import { MWAIHead, MWAIProvider, MWAIComponents } from "modifywithai/react";
 
 export const metadata: Metadata = {
   title: "SheikhGPT",
@@ -37,10 +38,16 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-        <Analytics />
-      </body>
+      <head>
+        <MWAIHead />
+      </head>
+      <MWAIProvider appId="app_b3FoTPYWLRtgyms3gwoFjB">
+        <body>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <Analytics />
+          <MWAIComponents />
+        </body>
+      </MWAIProvider>
     </html>
   );
 }
